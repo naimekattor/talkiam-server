@@ -12,7 +12,10 @@ const router=express.Router()
 router.get("/:userId",getUserController)
 
 //UPDATE USER
-router.put("/update/:userId",updateUserController)
+router.put("/update/:userId",upload.fields([
+    { name: "profilePicture", maxCount: 1 },
+    { name: "coverPicture", maxCount: 1 },
+  ]),updateUserController)
 
 //FOLLOW USER
 router.post("/follow/:userId",followUserController)

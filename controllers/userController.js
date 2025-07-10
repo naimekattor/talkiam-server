@@ -4,6 +4,12 @@ const Post=require("../models/Post")
 const Comment=require("../models/Comment")
 const Story=require("../models/Story")
 
+
+const generateFileUrl=(filename)=>{
+    return `${process.env.URL}/uploads/${filename}`
+}
+
+
 const getUserController=async(req,res,next)=>{
     const {userId}=req.params
     try{
@@ -24,8 +30,9 @@ const getUserController=async(req,res,next)=>{
 
 const updateUserController=async (req,res,next)=>{
 
-    const {userId}=req.params
-    const updateData=req.body
+    const {userId}=req.params;
+    const updateData=req.body;
+    const files=req.files;
     try{
 
         const userToUpdate=await User.findById(userId)
@@ -34,6 +41,14 @@ const updateUserController=async (req,res,next)=>{
         }
 
         Object.assign(userToUpdate,updateData)
+
+        if(files?.profilePicture){
+            userToUpdate.profilePicture=generateFileUrl(files.profilePicture[0].filename)
+        }
+
+        if(files?.coverPicture){
+            userToUpdate.coverPicture=generateFileUrl(files.coverPicture[0].filename)
+        }
 
         await userToUpdate.save()
 
@@ -263,9 +278,7 @@ const searchUserController=async (req,res,next)=>{
 
 }
 
-const generateFileUrl=(filename)=>{
-    return process.env.URL+`/uploads/${filename}`
-}
+
 
 const uploadProfilePictureController=async(req,res,next)=>{
     const {userId}=req.params
